@@ -1,0 +1,22 @@
+meta {
+  name: Create Plan
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{SERVER}}plans
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+body:json {
+  {
+    "name": "Plan 400MB",
+    "price": "40.00"
+  }
+}

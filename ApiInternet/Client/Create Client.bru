@@ -1,0 +1,28 @@
+meta {
+  name: Create Client
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{SERVER}}client
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+body:json {
+  {
+    "full_name": "Armando Campos",
+    "type_document": "DNI",
+    "document": "015078088",
+    "phone": "51936609272",
+    "address": "Direccion Peru",
+    "latitud": "10.261848",
+    "longitud": "-67.9613922",
+    "areaId": "30062e8e-36e8-4458-8a24-94b5c0d8668b"
+  }
+}

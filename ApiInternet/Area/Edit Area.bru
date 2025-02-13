@@ -1,0 +1,21 @@
+meta {
+  name: Edit Area
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{SERVER}}area/30062e8e-36e8-4458-8a24-94b5c0d8668b
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+body:json {
+  {
+    "title": "Area 1"
+  }
+}

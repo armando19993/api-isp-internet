@@ -1,0 +1,21 @@
+meta {
+  name: Create Area
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{SERVER}}area
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+body:json {
+  {
+    "title": "Area 4"
+  }
+}

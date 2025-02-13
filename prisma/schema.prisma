@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  publicId  Int       @unique @default(autoincrement())
+  name      String
+  user      String
+  password  String
+  status    STATUS    @default(ACTIVO)
+  role      TYPE_USER
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Roadmap   Roadmap[]
+}
+
+model Area {
+  id        String   @id @default(uuid())
+  publicId  Int      @unique @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clients   Client[]
+}
+
+model Plans {
+  id         String       @id @default(uuid())
+  publicId   Int          @unique @default(autoincrement())
+  name       String
+  price      Decimal      @db.Decimal(10, 2)
+  status     STATUS       @default(ACTIVO)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  clients    Client[]
+  PlanClient PlanClient[]
+}
+
+model Client {
+  id                String           @id @default(uuid())
+  publicId          Int              @unique @default(autoincrement())
+  full_name         String
+  type_document     TYPE_DOCUMENT
+  document          String
+  phone             String
+  phone_whatsapp    String?
+  email             String?
+  address           String
+  latitud           String
+  longitud          String
+  area              Area             @relation(fields: [areaId], references: [id])
+  plan              Plans?           @relation(fields: [plansId], references: [id])
+  date_activation   DateTime?        @db.Date()
+  user_mikrotik     String?
+  password_mikrotik String?
+  conexion_mikrotik String?
+  ip_mikrotik       String?
+  factura           Boolean          @default(false)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  roadmapsclients   RoadmapClients[]
+  status            STATUS_CLIENT    @default(CREADO)
+  areaId            String
+  plansId           String?
+  invoices          Invoice[]
+  PlanClient        PlanClient[]
+}
+
+model Roadmap {
+  id             String           @id @default(uuid())
+  publicId       Int              @unique @default(autoincrement())
+  user           User             @relation(fields: [userId], references: [id])
+  date           DateTime         @db.Date()
+  createdAt      DateTime         @default(now())
+  status         STATUS_ROADMAP   @default(PLANIFICADA)
+  updatedAt      DateTime         @updatedAt
+  userId         String
+  roadmapclients RoadmapClients[]
+}
+
+model RoadmapClients {
+  id        String                @id @default(uuid())
+  publicId  Int                   @unique @default(autoincrement())
+  roadmap   Roadmap               @relation(fields: [roadmapId], references: [id])
+  client    Client                @relation(fields: [clientId], references: [id])
+  status    STATUS_ROADMAP_CLIENT @default(PLANIFICADA)
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  roadmapId String
+  clientId  String
+}
+
+model Product {
+  id               String            @id @default(uuid())
+  publicId         Int               @unique @default(autoincrement())
+  name             String
+  price            Decimal           @db.Decimal(10, 2)
+  stock            Boolean           @default(true)
+  stock_count      Int
+  status           STATUS            @default(ACTIVO)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  invoicesProducts InvoiceProducts[]
+}
+
+model Invoice {
+  id                       String            @id @default(uuid())
+  publicId                 Int               @unique @default(autoincrement())
+  client                   Client            @relation(fields: [clientId], references: [id])
+  invoice_credit           Boolean           @default(false)
+  invoice_credit_aditional Boolean           @default(false)
+  invoice_credit_amount    Decimal           @default(0) @db.Decimal(10, 2)
+  invoice_discount         Boolean           @default(false)
+  invoice_discount_amount  Decimal           @db.Decimal(10, 2)
+  invoice_credit_quotes    Int?
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+  status                   STATUS_QUOTE      @default(CREADA)
+  clientId                 String
+  invoicesProducts         InvoiceProducts[]
+  InoviceQuotes            InoviceQuotes[]
+  InoviceQuotesFacturadas  InoviceQuotes[]   @relation("InoviceFacturada")
+  PlanClient               PlanClient[]
+}
+
+model InvoiceProducts {
+  id         String   @id @default(uuid())
+  publicId   Int      @unique @default(autoincrement())
+  invoice    Invoice  @relation(fields: [invoiceId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int
+  price_unit Decimal  @db.Decimal(10, 2)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  invoiceId  String
+  productId  String
+}
+
+model InoviceQuotes {
+  id                 String       @id @default(uuid())
+  publicId           Int          @unique @default(autoincrement())
+  invoice            Invoice      @relation(fields: [invoiceId], references: [id])
+  num_quote          Int
+  status_quote       STATUS_QUOTE @default(CREADA)
+  invoice_facturada  Invoice?     @relation("InoviceFacturada", fields: [invoiceFacturadaId], references: [id])
+  invoiceId          String
+  invoiceFacturadaId String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+}
+
+model PlanClient {
+  id               String         @id @default(uuid())
+  publicId         Int            @unique @default(autoincrement())
+  client           Client         @relation(fields: [clientId], references: [id])
+  plan             Plans          @relation(fields: [plansId], references: [id])
+  date_emision     DateTime       @db.Date()
+  date_vencimiento DateTime       @db.Date()
+  status_service   STATUS_SERVICE @default(GENERADO)
+  invoice          Invoice        @relation(fields: [invoiceId], references: [id])
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  clientId         String
+  plansId          String
+  invoiceId        String
+}
+
+enum STATUS {
+  ACTIVO
+  INACTIVO
+}
+
+enum TYPE_USER {
+  ADMIN
+  OPERARIO_CAMPO
+  OPERARIO_OFICINA
+  SOPORTE
+}
+
+enum STATUS_CLIENT {
+  CREADO
+  INSTALADO
+  ACTIVO
+  MOROSO
+  INACTIVO
+  BAJA
+  PLANIFICADO
+}
+
+enum TYPE_DOCUMENT {
+  DNI
+  CUIT
+}
+
+enum STATUS_ROADMAP {
+  PLANIFICADA
+  PROCESO
+  CERRADA
+}
+
+enum STATUS_ROADMAP_CLIENT {
+  PLANIFICADA
+  PROCESO
+  FALLIDO
+  INSTALADA
+}
+
+enum STATUS_QUOTE {
+  CREADA
+  FACTURADA
+  MOROSA
+  REFINANCIADA
+  PAGADA
+}
+
+enum STATUS_SERVICE {
+  GENERADO
+  MOROSO
+  PAGADO
+}

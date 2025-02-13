@@ -1,0 +1,21 @@
+meta {
+  name: Edit Client
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{SERVER}}client/a1cd37e4-b868-478d-891a-b57b9fb9a4d6
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{TOKEN}}
+}
+
+body:json {
+  {
+    "plansId": "8979eaae-6f40-4a10-89ed-c4bae511fce5"
+  }
+}
