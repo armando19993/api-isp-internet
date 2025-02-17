@@ -8,6 +8,8 @@ import { RoadmapModule } from './roadmap/roadmap.module';
 import { RoadmapClientsModule } from './roadmap-clients/roadmap-clients.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { ProductModule } from './product/product.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { ConfigModule } from '@nestjs/config';
     AreaModule, 
     ClientModule, 
     RoadmapModule, 
-    RoadmapClientsModule
+    RoadmapClientsModule, ProductModule, InventoryModule
   ],
   controllers: [],
   providers: [],

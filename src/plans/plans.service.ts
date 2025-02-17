@@ -34,7 +34,9 @@ export class PlansService {
   }
 
   async update(id: string, updatePlanDto: UpdatePlanDto) {
-    return `This action updates a #${id} plan`;
+    const data = await this.prisma.plans.update({ where: { id }, data: updatePlanDto })
+
+    return { data, message: 'Actualizacion Correcta' }
   }
 
   remove(id: string) {

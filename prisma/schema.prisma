@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  publicId  Int       @unique @default(autoincrement())
+  id        String      @id @default(uuid())
+  publicId  Int         @unique @default(autoincrement())
   name      String
   user      String
   password  String
-  status    STATUS    @default(ACTIVO)
+  status    STATUS      @default(ACTIVO)
   role      TYPE_USER
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   Roadmap   Roadmap[]
+  Inventory Inventory[]
 }
 
 model Area {
@@ -98,6 +99,8 @@ model RoadmapClients {
 model Product {
   id               String            @id @default(uuid())
   publicId         Int               @unique @default(autoincrement())
+  code             String?
+  codeBar          String?
   name             String
   price            Decimal           @db.Decimal(10, 2)
   stock            Boolean           @default(true)
@@ -106,6 +109,22 @@ model Product {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   invoicesProducts InvoiceProducts[]
+  Inventory        Inventory[]
+}
+
+model Inventory {
+  id            String         @id @default(uuid())
+  publicId      Int            @unique @default(autoincrement())
+  product       Product        @relation(fields: [productId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
+  type          TYPE_INVENTORY
+  qty_old       Int
+  qty_new       Int
+  qty_inventory Int
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  productId     String
+  userId        String
 }
 
 model Invoice {
@@ -222,4 +241,9 @@ enum STATUS_SERVICE {
   GENERADO
   MOROSO
   PAGADO
+}
+
+enum TYPE_INVENTORY {
+  INGRESO
+  EGRESO
 }
