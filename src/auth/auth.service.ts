@@ -29,7 +29,10 @@ export class AuthService {
 
     const token = await this.jwtService.signAsync(val);
     return {
-      data: val,
+      data: {
+        ...val,
+        password: undefined
+      },
       token,
       message: "Usuario a iniciado sesion correctamente!",
     };
